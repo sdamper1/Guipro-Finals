@@ -1,0 +1,92 @@
+import 'package:flutter/material.dart';
+
+class ToDoListScreen extends StatefulWidget {
+  @override
+  _ToDoListScreenState createState() => _ToDoListScreenState();
+}
+
+class _ToDoListScreenState extends State<ToDoListScreen> {
+  final List<Map<String, dynamic>> _tasks = [];
+
+  void _addTask(String title, String description, DateTime dueDate) {
+    setState(() {
+      _tasks.add({
+        'title': title,
+        'description': description,
+        'dueDate': dueDate,
+        'isCompleted': false,
+      });
+    });
+  }
+
+  void _editTask(int index, String title, String description, DateTime dueDate) {
+    setState(() {
+      _tasks[index]['title'] = title;
+      _tasks[index]['description'] = description;
+      _tasks[index]['dueDate'] = dueDate;
+    });
+  }
+
+  void _deleteTask(int index) {
+    setState(() {
+      _tasks.removeAt(index);
+    });
+  }
+
+  void _toggleComplete(int index) {
+    setState(() {
+      _tasks[index]['isCompleted'] = !_tasks[index]['isCompleted'];
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('To-Do List'),
+        backgroundColor: Color(0xFF0056b3),
+      ),
+      body: ListView.builder(
+        itemCount: _tasks.length,
+        itemBuilder: (context, index) {
+          var task = _tasks[index];
+          return ListTile(
+            title: Text(
+              task['title'],
+              style: TextStyle(
+                decoration: task['isCompleted']
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+              ),
+            ),
+            subtitle: Text('${task['description']} - Due: ${task['dueDate'].toLocal()}'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.check, color: Colors.green),
+                  onPressed: () => _toggleComplete(index),
+                ),
+                IconButton(
+                  icon: Icon(Icons.edit, color: Colors.blue),
+                  onPressed: () => _editTask(index, task['title'], task['description'], task['dueDate']),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => _deleteTask(index),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xFFFFD700),
+        child: Icon(Icons.add),
+        onPressed: () {
+          // Placeholder for Add Task functionality (could open a dialog)
+        },
+      ),
+    );
+  }
+}
